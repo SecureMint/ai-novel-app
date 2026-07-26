@@ -1,0 +1,12 @@
+{
+  "name": "novel-reader-app",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "build": "pnpm -r build"
+  }
+}

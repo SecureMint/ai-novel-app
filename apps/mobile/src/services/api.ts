@@ -1,0 +1,6 @@
+const BASE = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api';
+let token: string | null = null;
+export const setToken=(value:string|null)=>{token=value};
+async function request<T>(path:string, init:RequestInit={}) { const res=await fetch(`${BASE}${path}`,{...init,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`} : {}),...init.headers}}); if(!res.ok) throw new Error((await res.json().catch(()=>({}))).message||`HTTP ${res.status}`); return res.json() as Promise<T>; }
+export const api={ login:(username:string,password:string)=>request<{token:string;user:{id:string;username:string}}>('/auth/login',{method:'POST',body:JSON.stringify({username,password})}), books:()=>request('/books'), addShelf:(bookId:string)=>request('/shelf',{method:'POST',body:JSON.stringify({bookId})}), batch:(bookIds:string[],action:string)=>request('/shelf/batch',{method:'POST',body:JSON.stringify({bookIds,action})}), deleteHistory:(id:string)=>request(`/history/${id}`,{method:'DELETE'}), sync:(payload:unknown)=>request('/sync',{method:'POST',body:JSON.stringify(payload)}), download:(bookId:string)=>request<{chapters:any[]}>(`/books/${bookId}/download`) };
+export const aiSearchUrl=(query:string)=>`${BASE}/ai/search?q=${encodeURIComponent(query)}`;

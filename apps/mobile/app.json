@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "拾光阅读",
+    "slug": "novel-reader-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "web": { "bundler": "metro" },
+    "plugins": ["expo-sqlite"],
+    "ios": { "supportsTablet": true },
+    "android": { "edgeToEdgeEnabled": true }
+  }
+}

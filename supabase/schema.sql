@@ -1,0 +1,10 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),username VARCHAR(50) UNIQUE NOT NULL,password_hash VARCHAR(255) NOT NULL,is_archive_public BOOLEAN DEFAULT false,created_at TIMESTAMPTZ DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS books (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),title VARCHAR(255) NOT NULL,author VARCHAR(100) NOT NULL,cover_url TEXT,word_count INT DEFAULT 0,status VARCHAR(50) DEFAULT '连载中',score NUMERIC(3,1) DEFAULT 0.0,tags TEXT[],created_at TIMESTAMPTZ DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS chapters (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),book_id UUID REFERENCES books(id) ON DELETE CASCADE,chapter_number INT NOT NULL,title VARCHAR(255) NOT NULL,content_json JSONB NOT NULL,created_at TIMESTAMPTZ DEFAULT NOW(),updated_at TIMESTAMPTZ DEFAULT NOW(),UNIQUE(book_id,chapter_number));
+CREATE TABLE IF NOT EXISTS user_bookshelves (user_id UUID REFERENCES users(id) ON DELETE CASCADE,book_id UUID REFERENCES books(id) ON DELETE CASCADE,last_read_chapter_id UUID REFERENCES chapters(id) ON DELETE SET NULL,last_read_position INT DEFAULT 0,updated_at TIMESTAMPTZ DEFAULT NOW(),is_downloaded BOOLEAN DEFAULT false,PRIMARY KEY(user_id,book_id));
+CREATE TABLE IF NOT EXISTS user_annotations (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID REFERENCES users(id) ON DELETE CASCADE,book_id UUID REFERENCES books(id) ON DELETE CASCADE,chapter_id UUID REFERENCES chapters(id) ON DELETE CASCADE,paragraph_id VARCHAR(50) NOT NULL,selected_text TEXT NOT NULL,annotation_text TEXT,updated_at TIMESTAMPTZ DEFAULT NOW(),created_at TIMESTAMPTZ DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS user_histories (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID REFERENCES users(id) ON DELETE CASCADE,book_id UUID REFERENCES books(id) ON DELETE CASCADE,updated_at TIMESTAMPTZ DEFAULT NOW(),UNIQUE(user_id,book_id));
+CREATE INDEX IF NOT EXISTS books_tags_gin ON books USING GIN(tags);
+CREATE INDEX IF NOT EXISTS annotations_user_book ON user_annotations(user_id,book_id,updated_at DESC);
+-- 历史表没有指向 user_annotations 的外键；删除历史不会级联删除用户资产。
