@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "expo.vscode-expo-tools",
+    "ms-vscode.vscode-typescript-next",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "mikestead.dotenv"
+  ]
+}

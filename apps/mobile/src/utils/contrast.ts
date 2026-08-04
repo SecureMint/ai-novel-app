@@ -1,3 +1,23 @@
-const normalize = (hex: string) => hex.replace('#','').length === 3 ? hex.replace('#','').split('').map(x=>x+x).join('') : hex.replace('#','');
-export function relativeLuminance(hex: string) { const rgb = normalize(hex).match(/.{2}/g)?.map(v=>parseInt(v,16)/255) ?? [1,1,1]; const [r,g,b] = rgb.map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)); return .2126*r+.7152*g+.0722*b; }
-export function getContrastColor(bg: string) { const l=relativeLuminance(bg); const black=(l+.05)/.05; const white=1.05/(l+.05); return black>=white ? { text:'#171717', muted:'#5c5c5c', highlight:'#ffdfb8' } : { text:'#ffffff', muted:'#d9d9d9', highlight:'#8a5a2d' }; }
+const normalize = (hex: string) =>
+  hex.replace("#", "").length === 3
+    ? hex
+        .replace("#", "")
+        .split("")
+        .map(x => x + x)
+        .join("")
+    : hex.replace("#", "");
+export function relativeLuminance(hex: string) {
+  const rgb = normalize(hex)
+    .match(/.{2}/g)
+    ?.map(v => parseInt(v, 16) / 255) ?? [1, 1, 1];
+  const [r, g, b] = rgb.map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+export function getContrastColor(bg: string) {
+  const l = relativeLuminance(bg);
+  const black = (l + 0.05) / 0.05;
+  const white = 1.05 / (l + 0.05);
+  return black >= white
+    ? { text: "#171717", muted: "#5c5c5c", highlight: "#ffdfb8" }
+    : { text: "#ffffff", muted: "#d9d9d9", highlight: "#8a5a2d" };
+}
